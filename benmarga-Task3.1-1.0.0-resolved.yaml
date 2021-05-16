@@ -1,0 +1,565 @@
+---
+openapi: 3.0.0
+info:
+  title: League Mangement API
+  description: a cool League Mangement API created by ben and mor
+  contact:
+    name: Ben margalit, Mor Saranga
+    url: https://github.com/benmarga
+    email: benmarga@post.bgu.ac.il
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/mor-sa/Assignment-3-1/1.0.0
+  description: SwaggerHub API Auto Mocking
+- url: https://virtserver.swaggerhub.com/benmarga/Task3.1/1.0.0
+  description: SwaggerHub API Auto Mocking
+- url: localhost
+  description: our server
+tags:
+- name: home
+  description: the system main page
+- name: users
+  description: all the information and methods about users
+- name: players
+  description: all the information and methods about players
+- name: coaches
+  description: all the information and methods about coaches
+- name: teams
+  description: all the information and methods about teams
+- name: leagues
+  description: all the information and methods about leagues
+- name: game
+  description: all the information and methods about games
+- name: search
+  description: search page
+paths:
+  /register:
+    post:
+      tags:
+      - users
+      summary: a new user from the client is added to the server
+      description: a JSON object contains all details about the new user
+      requestBody:
+        description: user to add
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        "201":
+          description: a new user has been added
+        "400":
+          description: wrong input parameters
+        "409":
+          description: an existing item already exists
+  /login:
+    post:
+      tags:
+      - users
+      summary: an existing user trying to login
+      description: user try to login by username and password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+        required: true
+      responses:
+        "200":
+          description: login succeseed
+        "400":
+          description: wrong input parameters
+  /logout:
+    get:
+      tags:
+      - users
+      summary: user logout from system.
+      description: User requests to logout from the system
+      responses:
+        "200":
+          description: logout succeeded.
+        "401":
+          description: user must logged in before tryin logging out
+  /curfixture:
+    get:
+      summary: Games of the current fixture
+      description: Games of the current fixture
+      responses:
+        "200":
+          description: Games of the current fixture
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+        "401":
+          description: Could not fetch information
+  /teams/{id}:
+    get:
+      tags:
+      - teams
+      summary: System shows teamid team page.
+      description: User requests to get team info.
+      parameters:
+      - name: id
+        in: path
+        description: Numeric ID of the team id to get
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          example: 32
+      responses:
+        "200":
+          description: Successfully pull teamid team information.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_1'
+        "401":
+          description: wrong team id
+  /players/{id}:
+    get:
+      tags:
+      - players
+      summary: System shows player id's player page.
+      description: User requests to get player info.
+      parameters:
+      - name: id
+        in: path
+        description: Numeric ID of the player id to get
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          example: 53
+      responses:
+        "200":
+          description: Successfully pull player id's player information.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlayerFull'
+        "401":
+          description: wrong player id
+  /coaches/{id}:
+    get:
+      tags:
+      - coaches
+      summary: System shows coach id's plcoachayer page.
+      description: User requests to get coach info.
+      parameters:
+      - name: id
+        in: path
+        description: Numeric ID of the coach id to get
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          example: 53
+      responses:
+        "200":
+          description: Successfully pull coach id's coach information.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CoachFull'
+        "401":
+          description: wrong coach id
+  /search/teams/{searchQuery}:
+    get:
+      tags:
+      - search
+      - teams
+      summary: System shows team search results
+      description: User requests to search on teams by search query.
+      parameters:
+      - name: searchQuery
+        in: path
+        description: the search query for searching a query in the API. name or part of the name of a team
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successfully returned teams matching the query
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/inline_response_200_2'
+        "401":
+          description: Bad request
+  /search/players/{searchQuery}:
+    get:
+      tags:
+      - search
+      - players
+      summary: System shows players search results
+      description: User requests to search on players by search query.
+      parameters:
+      - name: searchQuery
+        in: path
+        description: the search query for searching a query in the API. name or part of the name of a player
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successfully returned players matching the query
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PlayerPreview'
+        "401":
+          description: Bad request
+  /search/coaches/{searchQuery}:
+    get:
+      tags:
+      - search
+      - coaches
+      summary: System shows players search results
+      description: User requests to search on coaches by search query.
+      parameters:
+      - name: searchQuery
+        in: path
+        description: the search query for searching a query in the API. name or part of the name of a coach
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successfully returned coaches matching the query
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CoachPreview'
+        "401":
+          description: Bad request
+components:
+  schemas:
+    Login:
+      required:
+      - password
+      - username
+      type: object
+      properties:
+        username:
+          maxLength: 8
+          minLength: 3
+          type: string
+          description: username contains letters only
+          example: morsa
+        password:
+          maxLength: 10
+          minLength: 5
+          type: string
+          description: password contains at least one letter and at least one specail char
+          format: password
+          example: morsa#123
+    User:
+      required:
+      - country
+      - email
+      - first name
+      - image-url
+      - last name
+      - password
+      - username
+      type: object
+      properties:
+        username:
+          maxLength: 8
+          minLength: 3
+          type: string
+          description: username contain letters only, 3 to 8
+          example: benmarga
+        first name:
+          type: string
+          description: user's first name
+          example: ben
+        last name:
+          type: string
+          description: user's last name
+          example: margalit
+        country:
+          type: string
+          description: user's country
+          example: Israel
+        password:
+          maxLength: 10
+          minLength: 5
+          type: string
+          description: user's password contain , 5 to 10 chars, at least one number and one specail char
+          format: password
+          example: ben$2108
+        email:
+          type: string
+          description: users's email
+          format: email
+          example: benmarga@post.bgu.ac.il
+        image-url:
+          type: string
+          description: URL for the users's image
+          format: URL
+          example: https://cloudinary.com/benmarga
+      description: user information
+    CoachPreview:
+      required:
+      - full name
+      - img-url
+      - team name
+      type: object
+      properties:
+        full name:
+          type: string
+          description: coach's full name
+          example: john kary
+        team name:
+          type: string
+          description: coach's team name
+          example: FC Barcelona
+        img-url:
+          type: string
+          description: URL for the coach's image
+          format: URL
+          example: https://cloudinary.com/john_kary
+      description: coach information
+    CoachFull:
+      required:
+      - birth country
+      - birth date
+      - common name
+      - full name
+      - img-url
+      - nationality
+      - team name
+      type: object
+      properties:
+        full name:
+          type: string
+          description: coach's full name
+          example: Barak Bachar
+        team name:
+          type: string
+          description: coacg's team name
+          example: Maccabi Haifa
+        img-url:
+          type: string
+          description: URL for the coach's image
+          format: URL
+          example: https://cloudinary.com/john_kary
+        common name:
+          type: string
+          example: Messi
+        nationality:
+          type: string
+          example: Isreali
+        birth date:
+          type: string
+          format: date
+        birth country:
+          type: string
+          example: France
+        height:
+          type: integer
+          example: 182
+        weight:
+          type: integer
+          example: 78
+      description: Coach's full information
+    PlayerPreview:
+      required:
+      - full name
+      - img-url
+      - position number
+      - team name
+      type: object
+      properties:
+        full name:
+          type: string
+          description: player's full name
+          example: amit kasdosh
+        team name:
+          type: string
+          description: player's team name
+          example: FC Barcelona
+        position number:
+          type: integer
+          description: player's position number
+          example: 10
+        img-url:
+          type: string
+          description: URL for the player's image
+          format: URL
+          example: https://cloudinary.com/john_kary
+      description: player information
+    PlayerFull:
+      required:
+      - birth country
+      - birth date
+      - common name
+      - full name
+      - height
+      - img-url
+      - nationality
+      - position number
+      - team name
+      type: object
+      properties:
+        full name:
+          type: string
+          description: player's full name
+          example: amit kasdosh
+        team name:
+          type: string
+          description: player's team name
+          example: FC Barcelona
+        position number:
+          type: integer
+          description: player's position number
+          example: 10
+        img-url:
+          type: string
+          description: URL for the player's image
+          format: URL
+          example: https://cloudinary.com/john_kary
+        common name:
+          type: string
+          example: Messi
+        nationality:
+          type: string
+          example: Israeli
+        birth date:
+          type: string
+          format: date
+        birth country:
+          type: string
+          example: France
+        height:
+          type: integer
+          example: 182
+        weight:
+          type: integer
+          example: 73
+      description: player's full information
+    Team:
+      required:
+      - coach
+      - name
+      - players
+      type: object
+      properties:
+        name:
+          type: string
+          example: Real Madrid
+        coach:
+          $ref: '#/components/schemas/CoachPreview'
+        players:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlayerPreview'
+      description: Team information with all participants
+    Game:
+      required:
+      - away team
+      - date
+      - home team
+      - stadium
+      type: object
+      properties:
+        date:
+          type: string
+          description: game's full date
+          format: date-time
+          example: 1985-04-12T23:20:50.52Z
+        home team:
+          $ref: '#/components/schemas/Team'
+        away team:
+          $ref: '#/components/schemas/Team'
+        stadium:
+          type: string
+          description: game's stadium
+          example: Sami Offer
+        home score:
+          type: integer
+          description: the score of the home team
+          example: 1
+        away score:
+          type: integer
+          description: the score of the away team
+          example: 0
+        events calendar:
+          $ref: '#/components/schemas/EventCalendar'
+      description: game information
+    EventCalendar:
+      minItems: 3
+      type: array
+      items:
+        $ref: '#/components/schemas/Event'
+    Event:
+      required:
+      - date
+      - event description
+      - game minute
+      type: object
+      properties:
+        date:
+          type: string
+          description: event date and time
+          format: date-time
+          example: 1985-04-12T23:20:50.52Z
+        game minute:
+          type: integer
+          description: the minute in the game the event happen
+          example: 40
+        event description:
+          type: string
+          description: description of the event
+          example: yellow card to messi
+      description: an object describe an event in a game
+    inline_response_200:
+      properties:
+        past-games:
+          type: array
+          items:
+            $ref: '#/components/schemas/Game'
+        future-games:
+          type: array
+          items:
+            $ref: '#/components/schemas/Game'
+    inline_response_200_1:
+      properties:
+        team-info:
+          $ref: '#/components/schemas/Team'
+        past-games:
+          type: array
+          items:
+            $ref: components/schemas/Game
+        future-events:
+          type: array
+          items:
+            $ref: components/schemas/Game
+    inline_response_200_2:
+      properties:
+        team name:
+          type: string
+          example: Real Madrid
+        team logo:
+          type: string
+          format: URL
+          example: https://www.logolynx.com/images/logolynx/55/5555882a691611ae374a450679f7f530.jpeg
